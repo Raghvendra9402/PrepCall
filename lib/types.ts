@@ -9,3 +9,10 @@ export interface Feedback {
   areasToImprove: string[];
   overallImpression: string;
 }
+
+export type VapiMessage = {
+  type: string;
+  role: "assistant" | "user";
+  transcript: string;
+  transcriptType: string;
+};

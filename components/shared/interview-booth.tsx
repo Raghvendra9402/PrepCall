@@ -1,5 +1,6 @@
 "use client";
 
+import { TranscriptMessage, VapiMessage } from "@/lib/types";
 import { vapi } from "@/lib/vapi";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
@@ -24,21 +25,18 @@ export function InterviewBooth({
   const [connecting, setConnecting] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
-  const [conversation, setConversation] = useState<any[]>([]);
-  const conversationRef = useRef<any[]>([]);
+  const conversationRef = useRef<TranscriptMessage[]>([]);
 
   const { user } = useUser();
   const router = useRouter();
 
   useEffect(() => {
     const handleCallStart = () => {
-      console.log("interview started");
       setConnecting(false);
       setCallActive(true);
       setCallEnded(false);
     };
     const handleCallEnd = () => {
-      console.log("Interview ended");
       setCallActive(false);
       setConnecting(false);
       setIsSpeaking(false);
@@ -46,20 +44,16 @@ export function InterviewBooth({
       generateFeedback();
     };
     const handleSpeechStart = () => {
-      console.log("AI started speaking");
       setIsSpeaking(true);
     };
     const handleSpeechEnd = () => {
-      console.log("AI stopped speaking");
       setIsSpeaking(false);
     };
-    const handleError = (error: any) => {
-      console.log("Vapi error: ", error);
+    const handleError = (error: unknown) => {
       setConnecting(false);
       setCallActive(false);
     };
-    const handleMessage = (message: any) => {
-      console.log("Message: ", message);
+    const handleMessage = (message: VapiMessage) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
         const lastMessage =
           conversationRef.current[conversationRef.current.length - 1];
@@ -71,13 +65,10 @@ export function InterviewBooth({
             content: message.transcript,
           });
         }
-
-        setConversation([...conversationRef.current]);
       }
     };
 
     const generateFeedback = async () => {
-      console.log("SENDING CONVERSATION", conversationRef.current);
       try {
         await axios.post("/api/feedback", {
           conversation: conversationRef.current,
@@ -85,7 +76,7 @@ export function InterviewBooth({
         });
         toast.success("Your result card has been generated.");
         router.push(`/interview/${interviewId}/result`);
-      } catch (error) {
+      } catch {
         toast.error("Something went wrong");
       }
     };
@@ -107,7 +98,7 @@ export function InterviewBooth({
         .off("message", handleMessage)
         .off("error", handleError);
     };
-  }, []);
+  }, [interviewId, router]);
 
   const toggleCall = async () => {
     if (callActive) {
@@ -124,8 +115,8 @@ export function InterviewBooth({
             difficulty,
           },
         });
-      } catch (error) {
-        console.log(error);
+      } catch {
+        toast.error("Something went wrong while connecting call...");
         setConnecting(false);
       }
     }
@@ -305,7 +296,7 @@ export function InterviewBooth({
               <span className="font-semibold text-gray-600">
                 Start Interview
               </span>{" "}
-              when you're ready. The AI will guide the session.
+              when you&apos;re ready. The AI will guide the session.
             </p>
           )}
           {callEnded && (

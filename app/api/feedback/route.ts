@@ -21,7 +21,7 @@ const feedbackSchema = z.object({
 export async function POST(req: Request) {
   try {
     const { conversation, interviewId } = await req.json();
-    console.log("CONV: ", conversation);
+
     const prompt = FEEDBACK_PROMPT.replace(
       "{{ conversation }}",
       JSON.stringify(conversation),
@@ -51,10 +51,8 @@ export async function POST(req: Request) {
         score: output.finalVerdict.score,
       },
     });
-    console.log("AI OUTPUT: ", output);
-
     return Response.json(output);
-  } catch (error) {
+  } catch {
     return new NextResponse("Internal server error", { status: 500 });
   }
 }

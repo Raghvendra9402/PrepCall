@@ -2,15 +2,9 @@
 
 import { Interview } from "@/lib/generated/prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
-import { ListCheck, MoreHorizontal, ArrowUpDown } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { CellAction } from "./cell-action";
 
 export const columns: ColumnDef<Interview>[] = [
   {
@@ -59,35 +53,8 @@ export const columns: ColumnDef<Interview>[] = [
     id: "actions",
     cell: ({ row }) => {
       const { id, status } = row.original;
-      const router = useRouter();
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <span className="sr-only">Open</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => router.push(`/interview/${id}/result`)}
-              disabled={status !== "COMPLETED"}
-            >
-              <ListCheck className="mr-2 h-4 w-4" />
-              View result
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => router.push(`/interview/${id}`)}
-              disabled={status !== "IN_PROGRESS"}
-            >
-              <ListCheck className="mr-2 h-4 w-4" />
-              Take interview
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <CellAction id={id} status={status} />;
     },
   },
 ];
