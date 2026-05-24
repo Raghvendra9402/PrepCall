@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser } from "@clerk/nextjs";
 import { LayoutDashboard, Mic, PhoneCall } from "lucide-react";
-import { redirect } from "next/navigation";
 
 const data = {
   teams: [
@@ -42,7 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser();
 
   if (!user) {
-    return redirect("/");
+    return null;
   }
 
   return (
