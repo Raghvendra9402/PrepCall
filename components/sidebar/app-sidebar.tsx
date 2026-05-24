@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser } from "@clerk/nextjs";
 import { LayoutDashboard, Mic, PhoneCall } from "lucide-react";
+import { redirect } from "next/navigation";
 
 const data = {
   teams: [
@@ -40,6 +41,10 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser();
 
+  if (!user) {
+    return redirect("/");
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -51,9 +56,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <NavUser
           user={{
-            name: user?.username!,
-            avatar: user?.imageUrl!,
-            email: user?.emailAddresses[0].emailAddress!,
+            name: user.fullName ?? "Unknown User",
+            avatar: user.imageUrl ?? "/unknown-user.png",
+            email: user.emailAddresses[0]?.emailAddress ?? "No Email",
           }}
         />
       </SidebarFooter>
