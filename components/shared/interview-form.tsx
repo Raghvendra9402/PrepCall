@@ -69,7 +69,7 @@ export function InterviewForm() {
         "Your interview is created, you will be redirected there...",
       );
       router.push(`/interview/${data.id}`);
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong!");
     }
   };

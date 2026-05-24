@@ -49,7 +49,7 @@ export function InterviewBooth({
     const handleSpeechEnd = () => {
       setIsSpeaking(false);
     };
-    const handleError = (error: unknown) => {
+    const handleError = () => {
       setConnecting(false);
       setCallActive(false);
     };

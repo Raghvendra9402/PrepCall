@@ -1,6 +1,5 @@
 "use client";
 
-import { Prisma } from "@/lib/generated/prisma/client";
 import { Feedback, TranscriptMessage } from "@/lib/types";
 import { getScoreMeta } from "@/lib/utils";
 import { format } from "date-fns";
@@ -20,8 +19,19 @@ import {
 } from "lucide-react";
 import { ScoreRing } from "./score-ring";
 
+interface InterviewData {
+  id: string;
+  category: string;
+  difficulty: string;
+  score: number | null;
+  status: string;
+  createdAt: Date;
+  transcript: TranscriptMessage[];
+  feedback: Feedback;
+}
+
 interface ResultCardProps {
-  interview: Prisma.InterviewGetPayload<{}>;
+  interview: InterviewData;
 }
 
 export function ResultCard({ interview }: ResultCardProps) {
@@ -34,18 +44,10 @@ export function ResultCard({ interview }: ResultCardProps) {
     createdAt,
     transcript,
     feedback,
-  } = interview as unknown as {
-    id: string;
-    category: string;
-    difficulty: string;
-    score: number;
-    status: string;
-    createdAt: Date;
-    transcript: TranscriptMessage[];
-    feedback: Feedback;
-  };
+  } = interview;
 
-  const scoreMeta = getScoreMeta(score);
+  const safeScore = score ?? 0;
+  const scoreMeta = getScoreMeta(safeScore);
 
   const dateStr = format(new Date(createdAt), "MMMM d, yyyy");
   const timeStr = format(new Date(createdAt), "hh:mm a");
@@ -100,7 +102,7 @@ export function ResultCard({ interview }: ResultCardProps) {
 
         <div className="grid sm:grid-cols-[200px_1fr] gap-4">
           <div className="bg-white border border-gray-200 rounded-2xl flex items-center justify-center py-8">
-            <ScoreRing score={score} />
+            <ScoreRing score={safeScore} />
           </div>
 
           <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-4">
